@@ -1,24 +1,15 @@
-FROM node:20-alpine
+FROM alpine:latest
 
-RUN apk update && apk add --no-cache git bash redis ffmpeg nginx
+# Instala dependências
+RUN apk update && apk add --no-cache redis bash nodejs npm
 
-# Clona Evolution API
-RUN git clone https://github.com/EvolutionAPI/evolution-api.git /evolution-api
-
-WORKDIR /evolution-api
-RUN npm install
-RUN npm run build
-
-# Instala n8n globalmente
-RUN npm install -g n8n
-
-# Copia configuração do nginx
-COPY nginx.conf /etc/nginx/nginx.conf
+# Instala n8n globalmente na última versão
+RUN npm install -g n8n@latest
 
 # Copia script de start
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-EXPOSE 80
+EXPOSE 6379 5678
 
 CMD ["/start.sh"]

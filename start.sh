@@ -3,16 +3,21 @@
 # Inicia Redis em background
 redis-server --daemonize yes
 
-echo "Redis started"
+echo "Redis iniciado"
 
-# Inicia Evolution API
+# Inicia Evolution API em background
 cd /evolution-api
-npm run build
 npm run start:prod &
-echo "Evolution API started"
 
-# Espera um pouco para Evolution subir
+echo "Evolution API iniciado"
+
+# Dá um tempinho para Evolution subir
 sleep 10
 
-# Inicia N8N
-n8n start
+# Inicia n8n em background
+n8n start &
+
+echo "n8n iniciado"
+
+# Inicia nginx em foreground (container mantém ativo)
+nginx -g 'daemon off;'

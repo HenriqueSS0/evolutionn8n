@@ -1,26 +1,24 @@
 FROM node:20-alpine
 
-# Instala dependências básicas
-RUN apk update && apk add --no-cache git bash redis ffmpeg
+RUN apk update && apk add --no-cache git bash redis ffmpeg nginx
 
-# Clona o Evolution API
+# Clona Evolution API
 RUN git clone https://github.com/EvolutionAPI/evolution-api.git /evolution-api
 
-# Instala dependências da Evolution API
 WORKDIR /evolution-api
 RUN npm install
+RUN npm run build
 
 # Instala n8n globalmente
 RUN npm install -g n8n
 
-# Copia seu workflow do n8n (opcional)
-# COPY workflow.json /workflows/workflow.json
+# Copia configuração do nginx
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Copia script de start
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-# Exponha as portas que vão ser usadas
-EXPOSE 6379 5678 8080
+EXPOSE 80
 
 CMD ["/start.sh"]
